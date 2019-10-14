@@ -1,0 +1,176 @@
+<html>
+    <head>
+        <title>{{ plan.ministry.name }}:: {{ plan.dates }}</title>
+        <style>
+            * { font-family: Formadjrtext,sans-serif; padding:0; margin:0; }
+            body, th, td { font-size: 9pt; }
+            .item { margin-bottom: 20px; }
+            #plan thead { display: table-header-group; }
+            #plan { border-collapse: collapse; width: 100%; font-size: 9pt; }
+            #plan th { background-color: black; color: white; }
+            #header { width: 100%; }
+            h2,h3,h4 {font-weight: 400}
+            h3 {
+                padding-top: 10px;
+                padding-bottom: 10px;
+                text-transform: uppercase;
+                letter-spacing: 1.2px;
+                font-size: 14px;
+                font-weight: 700;
+            }
+            table {
+                width: 100%; border: none; padding: 0; border-collapse: collapse;
+            }
+            table td {
+                padding: 5px 15px;
+                vertical-align: top;
+            }
+            .header td {
+                border-bottom: 1px solid #515151;
+            }
+            .border-right {
+                border-right: 1px solid #515151;
+            }
+            .border-left {
+                border-left: 1px solid #515151;
+            }
+            .border-none {
+                border-bottom: none;
+            }
+            .border-top {
+                border-top: 1px solid #515151;
+            }
+            .border-bottom {
+                border-bottom: 1px solid #515151;
+            }
+            .section {
+                color: #00a5f2;
+            }
+            .item {
+                padding-top: 20px;
+                padding-bottom: 20px;
+            }
+            .border-title {
+                border-top: none;
+                border-bottom: 1px solid #515151;
+            }
+            .item:last-of-type {
+                border-bottom: none;
+            }
+            .item-section {
+                border-top: 1px solid #515151;
+                border-bottom: none;
+            }
+            .lengthy {
+                padding-bottom: 140px;
+            }
+            .shorty {
+                padding-bottom: 40px;
+            }
+
+            @font-face {
+                font-family: 'Formadjrtext';
+                src: url('https://assets.website-files.com/5a941dc804115100018caf6f/5acac19e2c10d11a03447e58_FormaDJRText-Regular.eot') format('embedded-opentype'), url('https://assets.website-files.com/5a941dc804115100018caf6f/5acac19eb01ca6998a061e55_FormaDJRText-Regular.woff') format('woff');
+                font-weight: 400;
+                font-style: normal;
+            }
+            @font-face {
+                font-family: 'Formadjrtext';
+                src: url('https://assets.website-files.com/5a941dc804115100018caf6f/5acac19db01ca67644061e54_FormaDJRText-Bold.eot') format('embedded-opentype'), url('https://assets.website-files.com/5a941dc804115100018caf6f/5acac19d99758e782c1f7fe5_FormaDJRText-Bold.woff') format('woff');
+                font-weight: 700;
+                font-style: normal;
+            }
+            @font-face {
+                font-family: 'Formadjrtext';
+                src: url('https://assets.website-files.com/5a941dc804115100018caf6f/5acac19daf4ae82563311ed0_FormaDJRText-BoldItalic.eot') format('embedded-opentype'), url('https://assets.website-files.com/5a941dc804115100018caf6f/5acac19ef15a77fd0e64c5ed_FormaDJRText-BoldItalic.woff') format('woff');
+                font-weight: 700;
+                font-style: italic;
+            }
+        </style>
+    </head>
+<body>
+    <table id="header" width="100%" style="margin-bottom:20px;">
+        <tr>
+            <td>
+                <h1>{{ plan.plan_title }}</h1>
+                <h2>{{ plan.dates }}</h2>
+                <h3>{{ plan.series_title }}</h3>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <table id="notes">
+                    {% for note in plan.notes %}
+                        <tr>
+                            <td width="25%"><strong>{{ note.category_name }}:</strong></td>
+                            <td> {{ note.note }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </td>
+        </tr>
+    </table>
+    <table width="100%;">
+        <tr>
+            <td valign="top">
+                <table id="plan">
+                    <tr class="header">
+                        <td class="border-right border-bottom" width="5%"><h3>TIME</h3></td>
+                        <td class="border-right border-bottom" width="45%"><h3>ACTIVITY</h3></td>
+                        <td width="50%" class="border-bottom"><h3>NOTES</h3></td>
+                    </tr>
+                    {% for item in plan.items %}
+                        {% case item.item_type %}
+                            {% when 'Header' %}
+                                <tr class="item item-section">
+                                    <td width="5%"  class="border-right">
+
+                                    </td>
+                                    <td width="45%">
+                                        <h3>{{ item.title }}</h3>
+                                    </td>
+                                    <td width="50%">
+
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr class="item">
+                                    <td width="5%" class="border-right">
+                                        <h5>
+                                            {% for time in plan.plan_times %}
+                                                {% for item_time in item.times %}
+                                                    {% if item_time.time_id == time.id %}
+                                                        {{ item_time.actual_time | date: '%I:%M%p' | downcase }}
+                                                    {% endif %}
+                                                {% endfor %}
+                                            {% endfor %}
+                                        </h5>
+                                    </td>
+                                    <td width="45%" class="border-title border-right">
+                                        <h4>{{ item.title }}</h4>
+                                    </td>
+                                    <td width="50%" class="border-bottom">
+                                        <p class="{% if item.song %}lengthy{% else %}shorty{% endif %}">
+                                            {{ item.description }}
+                                        </p>
+                                    </td>
+                                </tr>
+                        {% endcase %}
+                    {% endfor %}
+                    <tr class="item">
+                        <td width="5%" class="border-top border-right">
+                            &nbsp;
+                        </td>
+                        <td width="45%" class="border-none">
+                            &nbsp;
+                        </td>
+                        <td width="50%" class="border-none">
+                            &nbsp;
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
