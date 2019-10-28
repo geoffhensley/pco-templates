@@ -148,6 +148,11 @@
                                     </td>
                                     <td width="45%" class="border-title border-right">
                                         <h4>{{ item.title }}</h4>
+                                      	<p>
+                                          {% for item_note in item.notes %}
+                                          		{{ item_note.note }}<br>
+                                          	{% endfor %}
+                                      	</p>
                                     </td>
                                     <td width="50%" class="border-bottom">
                                         <p class="{% if item.song %}lengthy{% else %}shorty{% endif %}">
