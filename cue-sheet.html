@@ -1,6 +1,6 @@
 <html>
     <head>
-        <title>{{ plan.ministry.name }}:: {{ plan.dates }}</title>
+        <title>{{ plan.plan_title }} - {{ plan.dates }}</title>
         <link rel="preconnect" href="https://fonts.gstatic.com">
         <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;500;700&display=swap" rel="stylesheet">
         <style>
@@ -111,18 +111,6 @@
                 <p>{{ plan.series_title }}</p>
             </td>
         </tr>
-        <tr>
-            <td>
-                <table id="notes">
-                    {% for note in plan.notes %}
-                        <tr>
-                            <td width="25%"><h5><strong>{{ note.category_name }}:</strong></h5></td>
-                            <td>{{ note.note }}</td>
-                        </tr>
-                    {% endfor %}
-                </table>
-            </td>
-        </tr>
     </table>
     <table width="100%;">
         <tr>
@@ -171,6 +159,15 @@
                                         <div class="item-detail">
                                             {{ item.detail }}
                                             {{ item.arrangement.lyrics }}
+
+                                            {% for attechment in item.attachments %}
+                                                {{ attechment.id }}
+                                                {{ attechment.name }}
+                                            {% endfor %}
+                                            {% for media in item.medias %}
+                                          		{{ media.title }}
+                                          		{{ media.item }}
+                                          	{% endfor %}
                                         </div>
 
                                         {% if item.description %}
@@ -196,6 +193,15 @@
                 </table>
             </td>
         </tr>
+    </table>
+
+    <table id="notes">
+        {% for note in plan.notes %}
+            <tr>
+                <td width="25%"><h5><strong>{{ note.category_name }}:</strong></h5></td>
+                <td>{{ note.note }}</td>
+            </tr>
+        {% endfor %}
     </table>
 </body>
 </html>
