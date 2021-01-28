@@ -1,0 +1,201 @@
+<html>
+    <head>
+        <title>{{ plan.ministry.name }}:: {{ plan.dates }}</title>
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;500;700&display=swap" rel="stylesheet">
+        <style>
+            * { font-family: 'Roboto', sans-serif; font-weight: 300; padding:0; margin:0; }
+            body, th, td { font-size: 12pt; }
+            .item { margin-bottom: 20px; }
+            #plan thead { display: table-header-group; }
+            #plan { border-collapse: collapse; width: 100%; font-size: 9pt; }
+            #plan th { background-color: black; color: white; }
+            #header {
+                width: 100%;
+            }
+			h1 {font-weight: 700; text-transform: uppercase; font-size: 18px;}
+            h2,h3,h4 {
+                font-weight: 500; 
+                font-size: 14px;
+            }
+            h3 {
+                padding-top: 10px;
+                padding-bottom: 10px;
+                text-transform: uppercase;
+                letter-spacing: 1.2px;
+                font-size: 22px;
+                font-weight: 700;
+            }
+            h4 {
+                padding-top: 0;
+                padding-bottom: 10px;
+                text-transform: uppercase;
+                letter-spacing: 1.2px;
+                font-size: 18px;
+                font-weight: 700;
+                color: blue;
+            }
+            h5 strong {font-weight: 700!important}
+            p {
+                font-weight: 300;
+            }
+            p strong {
+                font-weight: 700;
+            }
+            table {
+                width: 100%; border: none; padding: 0; border-collapse: collapse;
+            }
+            table td {
+                padding: 5px 15px;
+                vertical-align: top;
+            }
+            .section {
+                color: #00a5f2;
+            }
+            .item {
+                padding-top: 20px;
+                padding-bottom: 20px;
+            }
+            .item-detail {
+                padding: 20px 40px;
+            }
+                .item-detail b {
+                    font-weight: 500;
+                }
+            .lengthy {
+                padding-bottom: 80px;
+            }
+            .shorty {
+                padding-bottom: 40px;
+            }
+            .inset {
+                padding: 45px 30px;
+            }
+            .position-wrapper {
+                font-weight: 300;
+            }
+                .position-wrapper b {
+                    font-weight: 500;
+                }
+                .position-wrapper i {
+                    font-style: italic;
+                }
+            .position {
+                padding: 0 6px;
+                text-transform: uppercase;
+                font-weight: 500;
+            }
+            .audio {
+                background-color: #d2d2d2;
+            }
+            .video {
+                background-color: #fff716;
+            }
+            .lighting {
+                background-color: #52ff16;
+            }
+            .hide {
+                display: none;
+            }
+            .show {
+                display: block;
+            }
+        </style>
+    </head>
+<body>
+    <table id="header" width="100%">
+        <tr>
+            <td class="inset">
+                <h1>{{ plan.plan_title }}</h1>
+                <p>{{ plan.dates }}</p>
+                <p>{{ plan.series_title }}</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <table id="notes">
+                    {% for note in plan.notes %}
+                        <tr>
+                            <td width="25%"><h5><strong>{{ note.category_name }}:</strong></h5></td>
+                            <td>{{ note.note }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </td>
+        </tr>
+    </table>
+    <table width="100%;">
+        <tr>
+            <td valign="top">
+                <table id="plan">
+                    {% for item in plan.items %}
+                        {% case item.item_type %}
+                            {% when 'Header' %}
+                                <tr class="item item-section">
+                                    <td width="5%"  class="">
+
+                                    </td>
+                                    <td>
+                                        <h3>{{ item.title }}</h3>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr class="item">
+                                    <td width="5%" class="">
+                                        <h5>
+                                            {% for time in plan.plan_times %}
+                                                {% for item_time in item.times limit:1 %}
+                                                    {% if item_time.time_id == time.id %}
+                                          <strong>{{ item_time.actual_time | date: '%I:%M%p' | downcase }}</strong>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            {% endfor %}
+                                        </h5>
+                                    </td>
+                                    <td width="95%" class="">
+                                        <h4>{{ item.title }}</h4>
+                                        <p class="position-wrapper">
+                                            {% for item_note in item.notes %}
+                                                {% if item_note.category_name == 'Audio' %}
+                                                    <span class="position audio">Audio</span> – {{ item_note.note }}<br>
+                                                {% endif %}
+                                                {% if item_note.category_name == 'Video' %}
+                                                    <span class="position video">Video</span> – {{ item_note.note }}<br>
+                                                {% endif %}
+                                                {% if item_note.category_name == 'Lighting' %}
+                                                    <span class="position lighting">Lights</span> – {{ item_note.note }}<br>
+                                                {% endif %}
+                                          	{% endfor %}
+                                        </p>
+
+                                        <div class="item-detail">
+                                            {{ item.detail }}
+                                            {{ item.arrangement.lyrics }}
+                                        </div>
+
+                                        {% if item.description %}
+                                        <p>
+                                            {{ item.description }}
+                                        </p>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                        {% endcase %}
+                    {% endfor %}
+                    <tr class="item">
+                        <td width="5%" class="">
+                            &nbsp;
+                        </td>
+                        <td width="45%" class="">
+                            &nbsp;
+                        </td>
+                        <td width="50%" class="">
+                            &nbsp;
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
