@@ -1,0 +1,121 @@
+<!--
+QUICK CUSTOMIZATION:
+
+{% assign number_of_columns = 1 %}
+{% assign space_between_columns = "60px" %}
+
+{% assign print_ccli_number = true %}
+{% assign print_author = true %}
+{% assign print_copyright = true %}
+{% assign print_lyrics = true %}
+-->
+
+<html>
+<head>
+    <title>{{ plan.plan_title }} - Song Details - {{ plan.dates }}</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;500;700&display=swap" rel="stylesheet">
+	<style>
+	* { font-family: 'Roboto', sans-serif; font-weight: 300; padding:0; margin:0; }
+    body, th, td { font-size: 18px; }
+    strong, b { font-weight: 700; }
+
+    h1 {font-weight: 700; text-transform: uppercase; font-size: 32px;}
+    h2,h3,h4 {
+        font-weight: 500; 
+        font-size: 18px;
+    }
+    h3 {
+        padding-top: 10px;
+        padding-bottom: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1.2px;
+        font-size: 22px;
+        font-weight: 700;
+    }
+    h4 {
+        padding-top: 0;
+        padding-bottom: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1.2px;
+        font-size: 18px;
+        font-weight: 700;
+        color: black;
+    }
+    h5 strong {font-weight: 700!important}
+    p {
+        font-weight: 300;
+        color: black;
+    }
+    p strong {
+        font-weight: 700;
+    }
+
+	.chord_chart_content {
+		margin-top: 25px;
+		-moz-column-count: {{ number_of_columns }};
+		-moz-column-gap: {{ space_between_columns }};
+		-webkit-column-count: {{ number_of_columns }};
+		-webkit-column-gap: {{ space_between_columns }};
+		column-count: {{ number_of_columns }};
+		column-gap: {{ space_between_columns }};
+		column-fill: auto;
+	}
+
+	.column_break{column-break-after: always;}
+
+	#header { width: 100%; }
+    .song {
+        width: 100%;
+        column-break-after: always;
+    }
+    .song_title {
+        font-size: 26px;
+    }
+    .song_details {
+        width: 100%;
+        margin: 0 15px;
+    }
+    .credits, .copyright { 
+        font-size: 8pt; 
+        font-style: italic; 
+    }
+	.lyrics {
+        margin: 15px 15px 0;
+        color: black;
+        --webkit-column-count: 2;
+        -moz-column-count: 2;
+             column-count: 2;
+		-webkit-column-gap: {{ space_between_columns }};
+		column-gap: {{ space_between_columns }};
+		column-fill: auto;
+    }
+	</style>
+</head>
+<body>
+	<div id="header">
+		<h1>{{ plan.plan_title }}</h1>
+        <p>{{ plan.dates }}</p>
+        <p>{{ plan.series_title }}</p>
+	</div>
+	<div class="chord_chart_content">
+		{% for item in plan.items %}
+            {% if item.item_type == 'Song' %}
+                <div class="song">
+                    <div class="song_title">
+                        <h4>{{item.song.title}}</h4>
+                    </div>
+                    <div class="song_details">
+                        <div class="credits">{% if print_ccli_number and item.song.ccli_id != nil %}#{{item.song.ccli_id}} {% endif %}{% if print_author and item.song.author != '' %}by {{item.song.author}}{% endif %}</div>
+                        <div class="copyright">{% if print_copyright %}{{item.song.copyright}}{% endif %}</div>
+                    </div>
+
+                    {% if print_lyrics %}
+                        <div class="lyrics">{{item.arrangement.lyrics}}</div>
+                    {% endif %}
+                </div>
+            {% endif %}
+		{% endfor %}
+	</div>
+</body>
+</html>
