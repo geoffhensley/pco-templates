@@ -67,7 +67,8 @@ QUICK CUSTOMIZATION:
 	#header { width: 100%; }
     .song {
         width: 100%;
-        column-break-after: always;
+        /* column-break-after: always; */
+        margin-top: 20px;
     }
     .song_title {
         font-size: 26px;
@@ -83,19 +84,19 @@ QUICK CUSTOMIZATION:
 	.lyrics {
         margin: 15px 15px 0;
         color: black;
-        --webkit-column-count: 2;
+        /* --webkit-column-count: 2;
         -moz-column-count: 2;
              column-count: 2;
 		-webkit-column-gap: {{ space_between_columns }};
 		column-gap: {{ space_between_columns }};
-		column-fill: auto;
+		column-fill: auto; */
     }
 	</style>
 </head>
 <body>
 	<div id="header">
-		<h1>{{ plan.plan_title }}</h1>
-        <p>{{ plan.dates }}</p>
+		<h1>Lyrics - {{ plan.dates }}</h1>
+        <p>{{ plan.plan_title }}</p>
         <p>{{ plan.series_title }}</p>
 	</div>
 	<div class="chord_chart_content">
@@ -111,7 +112,7 @@ QUICK CUSTOMIZATION:
                     </div>
 
                     {% if print_lyrics %}
-                        <div class="lyrics">{{item.arrangement.lyrics}}</div>
+                        <div class="lyrics">{{item.arrangement.lyrics | replace: "\(.+\)", "hi"}}</div>
                     {% endif %}
                 </div>
             {% endif %}
