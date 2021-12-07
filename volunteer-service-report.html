@@ -1,0 +1,104 @@
+<!--
+QUICK CUSTOMIZATION:
+
+{% assign print_picture = "true" %}
+{% assign print_email = "false" %}
+{% assign print_phone = "false" %}
+{% assign print_address = "false" %}
+{% assign print_birthday = "false" %}
+{% assign print_anniversary = "false" %}
+{% assign print_notes = "true" %}
+{% assign print_people_positions = "false" %} (setting this to true will cause your report to run MUCH slower)
+
+
+ONLY PRINT FROM SPECIFIC SERVICE TYPES
+
+STEP 1: SET THE BELOW TO 'TRUE'
+{% assign print_select_services = "false" %}
+
+STEP 2: ENTER THE NAMES OF THE SERVICE TYPES YOU WOULD LIKE TO PRINT, REPLACING THE EXAMPLES BELOW
+{% array my_services = "Contemporary", "Traditional", "Wednesday Night", %} (The more services you add here, the slower your report will be)
+
+{% assign picture_width = "50" %}
+
+SORTING:
+{% assign sorted_people = people | sort: "first_name" %}
+You can sort on:
+	- last_name
+	- first_name
+	- updated_at
+	- last_scheduled
+	- created_at
+	- logged_in_at
+-->
+
+<html>
+    <head>
+        <title>People</title>
+        <style>
+            * { font-family: Verdana, Arial; font-size: 10pt; }
+            body { padding:0; margin:0; }
+
+            .container { width: ; margin: 0 auto; }
+
+            .people { border-collapse: collapse; border: solid 1px black; width: 100%; font-size: 0.9em;  }
+
+            .people th {
+            background-color: #DDD;
+            font-size: 12pt;
+            text-align: left;
+            padding: 2px;
+            vertical-align: center;
+            border: solid 1px black;
+            }
+
+            .people td {
+            padding: 2px;
+            vertical-align: top;
+            border: solid 1px black;
+            } 
+
+            .address {
+            align: left;
+            border-collapse: collapse;
+            margin: 0;
+            padding: 0;
+            }
+
+            .address td {
+            border: none;
+            margin: 0;
+            padding: 0;
+            }
+
+            H1 {
+            font-size: 26pt;
+            padding: 0;
+            margin: 0;
+            }
+
+            H2 {
+            font-size: 16pt;
+            padding: 0;
+            margin: 0;
+            }
+
+            #schedule { border-collapse: collapse; border: none; width: 100%; }
+            #schedule td { width: 33%; border: none; border-bottom: solid 1px lightgray; }
+            #schedule tr:last-child td { border: none; }
+        </style>
+    </head>
+    <body>
+    <div class="container">
+        {% for person in sorted_people %}
+            <h2>{{ person.name }}</h2>
+            {% for future_plan in person.confirmed_future_plan_people %}
+                <h3>{{ plan.plan.dates }}</h3>
+                <h4>{{ plan.plan.ministry.name }}</h4>
+                <p>{{ plan_person.position }}</p>
+            {% endfor %}
+            {{ person.notes }}
+        {% endfor %}
+    </div>
+    </body>
+</html>
