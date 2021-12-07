@@ -1,0 +1,153 @@
+<!-- Set to "true" if you want each day on it's own page -->
+{% assign day_page_break = false %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Facilities Set Up Report</title>
+    <link rel="stylesheet" type="text/css" media="all" href="{{ report.stylesheet_href }}">
+    <meta charset="utf-8">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Roboto', sans-serif; font-weight: 300; padding:0; margin:0; font-size: 8pt!important; }
+        body, th, td { font-size: 8pt!important; }
+        strong, b { font-weight: 700; }
+        h1 {font-weight: 700; text-transform: uppercase; font-size: 16px;}
+        h2,h3,h4 {
+            font-weight: 500; 
+            font-size: 14px;
+        }
+        h3 {
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+        h3:first-of-type {
+            margin-top: 0;
+        }
+        h4 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+        h5 strong {font-weight: 700!important}
+        p {
+            font-weight: 300;
+        }
+        p strong {
+            font-weight: 700;
+        }
+        table {
+            margin: 0!important;
+        }
+        .top-header {
+            margin-top: 10px!important;
+            background: #eee;
+            padding: 10px;
+        }
+        .highlight {
+            padding: 5px;
+        }
+      li {
+        list-style-type: none;
+      }
+    </style>
+  </head>
+  <body>
+    {% if report.org_twenty_four_hour_time? %}
+      {% assign time_format = "%H:%M" %}
+    {% else %}
+      {% assign time_format = "%-I:%M%P" %}
+    {% endif %}
+
+    {% if report.org_day_month_dates? %}
+      {% assign date_format = "%d/%m/%Y" %}
+    {% else %}
+      {% assign date_format = "%m/%d/%Y" %}
+    {% endif %}
+
+    {% for day in days_with_instances | sort: "starts_at" %}
+    <div class="table-container{% if day_page_break and forloop.index < forloop.length  %} page-break{% endif %}">
+        <div class="gutter-bottom-large">
+
+            <h3 class="gutter-top-medium gutter-bottom-small">
+                <strong>{{ day.date | date: '%A, %B %-d, %Y'}}</strong>
+            </h3>
+
+                <table>
+                {% for instance in day.instances | sort: "starts_at" %}
+                        <tbody>
+                            {% for room_request in instance.reservation.room_requests %}
+                                {% if room_request.room_setup %}
+                                    <tr>
+                                        <td width="10%">
+                                            {% capture start_date %} {{ instance.starts_at | date: "%m/%d/%Y" }} {% endcapture %} {% capture end_date %} {{ instance.ends_at | date: "%m/%d/%Y" }} {% endcapture %} {% capture today %} {{ day.date | date: "%m/%d/%Y" }} {% endcapture %}
+                                            {% if instance.reservation.all_day_event? %}
+                                                All-day
+                                            {% elsif start_date == today and start_date != end_date %}
+                                                Today, {{ instance.starts_at | date: time_format }}
+                                            {% elsif start_date == end_date %}
+                                                {{ instance.starts_at | date: time_format | downcase }}
+                                            {% else %}
+                                                {{instance.starts_at | date: date_format }} ({{ instance.starts_at | date: time_format | downcase }})
+                                            {% endif %}
+                                        </td>
+                                        <td width="15%">
+                                            <li>
+                                                {{ instance.event.name }}
+                                            </li>
+                                        </td>
+                                        <td width="10%">
+                                            <li>
+                                                {{ room_request.room.name }}
+                                            </li>
+                                        </td>
+                                        <td width="30%">
+                                            <div>
+                                                {{ room_request.room_setup.name }}
+                                                {% if room_request.room_setup.description != blank %}
+                                                &mdash; {{ room_request.room_setup.description }}
+                                                {% endif %}
+                                                {% if room_request.notes != blank %}
+                                                    {{ room_request.notes }}
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                        <td width="35%">
+                                            {% if room_request.answers.size > 0 %}
+                                                {% for answer in room_request.answers %}
+                                                    {% if answer.section_header? %}
+                                                        <p>
+                                                            <strong>{{ answer.label }}</strong>
+                                                            {{ answer.description }}
+                                                        </p>
+                                                    {% else %}
+                                                        <p>
+                                                            <strong>{{ answer.question }}</strong> &mdash; {{answer.answer}}
+                                                        </p>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
+                        </tbody>
+                {% endfor %}
+                </table>
+        </div>
+    </div>
+    {% else %}
+      <div>
+        <h1 class="header-large txt-center gutter-bottom-small">Basic {{ report.kind | capitalize }} Report by Date</h1>
+        <h2 class="header-medium txt-center soft gutter-bottom-large">{{ report.scope }}: {{ report.start_date }} through {{ report.end_date }}</h2>
+        <h1 class="header-large txt-center gutter-bottom-small">There are no events which fit the filters in the selected date range.</h1>
+      </div>
+    {% endfor %}
+  </body>
+</html>
