@@ -83,7 +83,7 @@
                 {% for instance in day.instances | sort: "starts_at" %}
                         <tbody>
                             {% for room_request in instance.reservation.room_requests %}
-                                {% if room_request.room_setup %}
+                                {% if room_request.room_setup or room_request.notes != blank %}
                                     <tr>
                                         <td width="10%">
                                             {% capture start_date %} {{ instance.starts_at | date: "%m/%d/%Y" }} {% endcapture %} {% capture end_date %} {{ instance.ends_at | date: "%m/%d/%Y" }} {% endcapture %} {% capture today %} {{ day.date | date: "%m/%d/%Y" }} {% endcapture %}
@@ -151,3 +151,4 @@
     {% endfor %}
   </body>
 </html>
+
