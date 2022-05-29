@@ -68,6 +68,11 @@
               	background: #eee;
               	padding: 0;
             }
+          	.item-note {
+              display: block;
+              font-style: italic;
+              padding-left: 10px;
+          	}
             .lengthy {
                 padding-bottom: 20px;
             }
@@ -83,6 +88,11 @@
                 <h1>{{ plan.plan_title }}</h1>
                 <h2>{{ plan.dates }}</h2>
                 <!--<h3>SERIES: "{{ plan.series_title }}"</h3>-->
+              	{% for note in plan.notes %}
+                    {% if note.category_name == 'Teacher' %}
+                        <h2 style="padding-top:10px;">{{ note.note }}</h2>
+                    {% endif %}
+                {% endfor %}
             </td>
         </tr>
     </table>
@@ -116,7 +126,7 @@
                                             {% for time in plan.plan_times %}
                                                 {% for item_time in item.times limit:1 %}
                                                     {% if item_time.time_id == time.id %}
-                                          <strong>{{ item_time.actual_time | date: '%I:%M%p' | downcase }}</strong>
+                                          				<strong>{{ item_time.actual_time | date: '%I:%M%p' | downcase }}</strong>
                                                     {% endif %}
                                                 {% endfor %}
                                             {% endfor %}
@@ -128,6 +138,14 @@
                                     <td width="50%" class="border-bottom">
                                         <p class="{% if item.song %}lengthy{% else %}shorty{% endif %}">
                                             {{ item.description }}&nbsp;
+
+                                          	{% for item_note in item.notes %}
+                                          		{% if item_note.category_name == "Comments" %}
+                                          			<span class="item-note">
+                                                      {{ item_note.note }}
+                                      				</span>
+                                          		{% endif %}
+                                          	{% endfor %}
                                         </p>
                                     </td>
                                 </tr>
@@ -158,10 +176,12 @@
                     {% for note in plan.notes %}
                         {% if note.category_name != 'Vocal' %}
 							{% if note.category_name != 'Staging' %}
-                              <tr>
-                                <td width="25%"><h5><strong>{{ note.category_name }}:</strong></h5></td>
-                                  <td>{{ note.note }}</td>
-                              </tr>
+                  				{% if note.category_name != 'Teacher' %}
+                                  <tr>
+                                    <td width="25%"><h5><strong>{{ note.category_name }}:</strong></h5></td>
+                                      <td>{{ note.note }}</td>
+                                  </tr>
+                  				{% endif %}
                   			{% endif %}
                         {% endif %}
                     {% endfor %}
